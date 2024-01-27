@@ -4,7 +4,7 @@ import json
 numbers = [random.randint(1, 100) for _ in range(100)]
 # Create a JSON object
 json_object = {
-    "integers": numbers
+    "num_list": numbers
 }
 # Convert the JSON object to a string
 json_string = json.dumps(json_object)

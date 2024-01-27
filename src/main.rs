@@ -38,13 +38,49 @@ fn get_num_list() -> anyhow::Result<Vec<u64>> {
     Ok(num_list)
 }
 
-fn quicksort(list: &mut Vec<u64>) {
+fn qs(mut left: usize, mut right: usize, list: &mut Vec<u64>) {
+    let len = match right.checked_sub(left) {
+        Some(diff) => diff + 1,
+        None => return,
+    };
 
+    if len <= 1 {
+        return;
+    }
+
+    let pivot = right;
+    let oleft = left;
+    right -= 1;
+
+    while left < right {
+        if list[left] > list[pivot] && list[right] < list[pivot] {
+            list.swap(left, right);
+        }
+
+        if list[left] < list[pivot] {
+            left += 1;
+        }
+
+        if list[right] > list[pivot] {
+            right -= 1;
+        }
+    }
+
+    left += 1;
+    list.swap(pivot, left);
+
+    qs(oleft, right, list); // left partition
+    qs(left, pivot, list); // right partition
+}
+
+fn quicksort(list: &mut Vec<u64>) {
+    qs(0, list.len() - 1, list);
 }
 
 fn main() -> anyhow::Result<()> {
-    let num_list = get_num_list()?;
+    let mut num_list = get_num_list()?;
 
+    quicksort(&mut num_list);
     println!("{num_list:?}");
 
     Ok(())
