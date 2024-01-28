@@ -57,11 +57,11 @@ fn qs(mut left: usize, mut right: usize, list: &mut Vec<u64>) {
             list.swap(left, right);
         }
 
-        if list[left] < list[pivot] {
+        if list[left] <= list[pivot] {
             left += 1;
         }
 
-        if list[right] > list[pivot] {
+        if list[right] >= list[pivot] {
             right -= 1;
         }
     }
