@@ -83,5 +83,14 @@ fn main() -> anyhow::Result<()> {
     quicksort(&mut num_list);
     println!("{num_list:?}");
 
+    let mut i = 1;
+    while i < num_list.len() {
+        if num_list[i-1] > num_list[i] {
+            println!("Assertion failed at index: {i}. {} > {}", num_list[i-1], num_list[i]);
+            assert!(false);
+        }
+        i += 1;
+    }
+
     Ok(())
 }
