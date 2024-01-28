@@ -38,50 +38,44 @@ fn get_num_list() -> anyhow::Result<Vec<u64>> {
     Ok(num_list)
 }
 
-fn qs(mut left: usize, mut right: usize, list: &mut Vec<u64>) {
-    let len = match right.checked_sub(left) {
-        Some(diff) => diff + 1,
-        None => return,
-    };
+fn partition(list: &mut Vec<u64>, low: usize, high: usize) -> (usize, usize) {
+    let pivot = list[(low + high) / 2];
+    let mut lesser_index: usize = low;
+    let mut equal_index: usize = low;
+    let mut greater_index: usize = high;
 
-    if len <= 1 {
-        return;
-    }
-
-    let pivot = right;
-    let oleft = left;
-    right -= 1;
-
-    while left < right {
-        if list[left] > list[pivot] && list[right] < list[pivot] {
-            list.swap(left, right);
-        }
-
-        if list[left] <= list[pivot] {
-            left += 1;
-        }
-
-        if list[right] >= list[pivot] {
-            right -= 1;
+    while equal_index <= greater_index {
+        if list[equal_index] < pivot {
+            list.swap(equal_index, lesser_index);
+            lesser_index += 1;
+            equal_index += 1;
+        } else if list[equal_index] > pivot {
+            list.swap(equal_index, greater_index);
+            greater_index = greater_index.checked_sub(1).unwrap();
+        } else {
+            equal_index += 1;
         }
     }
 
-    left += 1;
-    list.swap(pivot, left);
-
-    qs(oleft, right, list); // left partition
-    qs(left, pivot, list); // right partition
+    (lesser_index, greater_index)
 }
 
-fn quicksort(list: &mut Vec<u64>) {
-    qs(0, list.len() - 1, list);
+fn quicksort(list: &mut Vec<u64>, low: usize, high: usize) {
+    if low < high {
+        let (lesser_index, greater_index) = partition(list, low, high);
+        quicksort(list, low, lesser_index.checked_sub(1).unwrap_or(0));
+        quicksort(list, greater_index + 1, high);
+    }
 }
 
 fn main() -> anyhow::Result<()> {
     let mut num_list = get_num_list()?;
 
-    quicksort(&mut num_list);
-    println!("{num_list:?}");
+    let low = 0;
+    let high = num_list.len() - 1;
+    println!("Unsorted: {num_list:?}");
+    quicksort(&mut num_list, low, high);
+    println!("Sorted: {num_list:?}");
 
     let mut i = 1;
     while i < num_list.len() {
